@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
@@ -11,6 +12,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use App\Mail\WelcomeEmail;
+use App\Mail\LoginAlertEmail;
 
 class RegisteredUserController extends Controller
 {
@@ -40,6 +43,9 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
+
+        // added
+        Mail::to($user->email)->send(new WelcomeEmail($user));
 
         event(new Registered($user));
 
